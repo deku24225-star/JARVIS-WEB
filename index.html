@@ -1,8 +1,51 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#050b14"><link rel="manifest" href="manifest.webmanifest"><title>JARVIS Web</title><link rel="stylesheet" href="style.css"></head><body>
-<div class="app"><header><div><div class="brand">J A R V I S</div><div class="sub">PERSONAL AI // WEB CORE</div></div><div class="right"><span id="net">ONLINE</span><button id="settings">⚙</button></div></header>
-<section class="hero"><div class="orb"><i></i><i></i><b></b></div><div><div id="state">READY</div><h1>Good to see you.</h1><p>Voice or text. Your command, my response.</p></div></section>
-<section class="panel"><div id="chat"></div><div class="quick"><button data-c="What is the time?">TIME</button><button data-c="What's the weather?">WEATHER</button><button data-c="Search Google for ">SEARCH</button><button data-c="Open YouTube">YOUTUBE</button><button data-c="Open Maps">MAPS</button><button data-c="Tell me the date">DATE</button></div><div class="compose"><textarea id="input" placeholder="Speak or type a command…"></textarea><button id="mic">🎙</button><button id="send">➤</button></div><div class="controls"><button id="stop">STOP</button><button id="clear">CLEAR</button><button id="remember">REMEMBER</button></div></section>
-<footer>JARVIS WEB CORE <span>AI PROPOSES · CORE DECIDES · USER AUTHORIZES</span></footer></div>
-<dialog id="dlg"><h2>JARVIS SETTINGS</h2><label>Language<select id="lang"><option value="en-IN">English (India)</option><option value="hi-IN">Hindi (India)</option></select></label><label>Personality<select id="person"><option value="bestfriend">Male Best Friend</option><option value="professional">Professional</option><option value="calm">Calm</option></select></label><label><input id="voice" type="checkbox" checked> Speak replies aloud</label><label><input id="wake" type="checkbox"> Wake phrase mode</label><input id="phrase" placeholder="Wake phrase (e.g. Jarvis)"><button id="save">SAVE</button></dialog>
-<dialog id="confirm"><h2>AUTHORIZATION REQUIRED</h2><p id="confirmText"></p><div class="actions"><button id="cancel">CANCEL</button><button id="authorize">AUTHORIZE</button></div></dialog>
-<script src="app.js"></script><script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050914">
+<meta name="description" content="JARVIS — futuristic personal AI assistant">
+<link rel="manifest" href="manifest.webmanifest">
+<title>JARVIS // V1.3</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+<header class="topbar">
+  <div class="brand-wrap"><div class="brand">JARVIS</div><div class="sub">PERSONAL AI // V1.3</div></div>
+  <div class="top-actions"><span id="net" class="status-pill">ONLINE</span><button id="openMemory" type="button" class="icon-btn" aria-label="Open memory">◈</button><button id="settings" type="button" class="icon-btn" aria-label="Open settings">⚙</button></div>
+</header>
+<main>
+<section class="core-card">
+  <div class="core-visual" aria-hidden="true"><div class="ring ring-a"></div><div class="ring ring-b"></div><div class="ring ring-c"></div><div class="core-dot"></div><span class="scan scan-1"></span><span class="scan scan-2"></span></div>
+  <div class="core-info"><div class="eyebrow"><span class="pulse"></span><span id="state">READY</span></div><h1>Good to see you.</h1><p>Your command, my response.</p><div class="telemetry"><span>AI CORE <b>ACTIVE</b></span><span>LIVE INFO <b>READY</b></span><span>SECURITY <b>ARMED</b></span></div></div>
+</section>
+<section class="assistant-panel">
+  <div class="panel-head"><div><span class="eyebrow">CONVERSATION</span><h2>JARVIS</h2></div><button id="clear" type="button" class="ghost-btn">CLEAR</button></div>
+  <div id="chat" aria-live="polite"></div>
+  <div class="quick" aria-label="Optional shortcuts"><button data-c="What is the time?" type="button">TIME</button><button data-c="What's the weather?" type="button">WEATHER</button><button data-c="Search Google for " type="button">SEARCH</button><button data-c="Open YouTube" type="button">YOUTUBE</button><button data-c="Open Maps" type="button">MAPS</button><button data-c="Tell me the date" type="button">DATE</button></div>
+  <div class="compose"><textarea id="input" rows="1" placeholder="Ask JARVIS anything…" aria-label="Message JARVIS"></textarea><button id="mic" type="button" class="round-btn" aria-label="Voice input">⌁</button><button id="remember" type="button" class="round-btn" aria-label="Remember this">◈</button><button id="stop" type="button" class="round-btn" aria-label="Stop voice output">■</button><button id="send" type="button" class="send-btn" aria-label="Send">↑</button></div>
+  <div class="command-hint"><span>TEXT OR VOICE</span><span>AI PROPOSES · CORE DECIDES · YOU AUTHORIZE</span></div>
+</section>
+</main>
+<footer><span>JARVIS WEB CORE</span><span>V1.3.0</span></footer>
+</div>
+
+<dialog id="dlg" class="sheet">
+<div class="sheet-head"><div><span class="eyebrow">CONTROL CENTER</span><h2>Settings</h2></div><button id="closeSettings" type="button" class="icon-btn">×</button></div>
+<div class="settings-grid">
+<section><h3>JARVIS</h3><label>Personality<select id="person"><option value="bestfriend">Male Best Friend</option><option value="professional">Professional</option><option value="calm">Calm</option></select></label><label>Response style<select id="style"><option value="balanced">Balanced</option><option value="concise">Concise</option><option value="detailed">Detailed</option></select></label></section>
+<section><h3>Voice</h3><label>Language<select id="lang"><option value="en-IN">English (India)</option><option value="hi-IN">Hindi (India)</option></select></label><label><input id="voice" type="checkbox" checked> Voice output enabled</label><label><input id="wake" type="checkbox"> Wake phrase mode</label><label>Wake phrase<input id="phrase" placeholder="Jarvis"></label><label>Speech speed<input id="speechRate" type="range" min="0.7" max="1.4" step="0.05" value="1"></label><p class="muted">Automatic speaking occurs only for responses triggered by voice input. Text commands stay silent unless you manually use voice output.</p></section>
+<section><h3>Appearance</h3><label>Theme<select id="theme"><option value="midnight">Midnight HUD</option><option value="glass">Glass HUD</option></select></label><label>Animation<select id="animations"><option value="full">Full</option><option value="reduced">Reduced</option></select></label></section>
+<section><h3>Memory</h3><label><input id="memoryEnabled" type="checkbox" checked> Allow JARVIS to save explicit memories</label><button id="openMemoryFromSettings" type="button" class="wide-btn">OPEN MEMORY CENTER</button></section>
+<section><h3>AI & Security</h3><div class="info-row"><span>Provider</span><b>OpenRouter</b></div><div class="info-row"><span>Model</span><b>Free router</b></div><div class="info-row"><span>Live information</span><b>Current-query web grounding</b></div><div class="info-row"><span>API key</span><b>Server-side</b></div><div class="info-row"><span>Sensitive actions</span><b>Confirmation required</b></div></section>
+<section><h3>About</h3><div class="info-row"><span>Version</span><b>V1.3.0</b></div><div class="info-row"><span>Platform</span><b>Web / PWA</b></div><p class="muted">JARVIS Web is browser-based. Native Android capabilities remain limited by browser security.</p></section>
+</div><button id="save" type="button" class="primary-btn">SAVE SETTINGS</button>
+</dialog>
+
+<dialog id="memoryDlg" class="sheet"><div class="sheet-head"><div><span class="eyebrow">MEMORY CORE</span><h2>Your memories</h2></div><button id="closeMemory" type="button" class="icon-btn">×</button></div><p class="muted">Only explicit memories are saved here. You can remove any memory at any time.</p><div id="memoryList" class="memory-list"></div><button id="clearMemories" type="button" class="danger-btn">CLEAR ALL MEMORIES</button></dialog>
+
+<dialog id="confirm" class="confirm"><div class="eyebrow">SECURITY CORE</div><h2>Authorization required</h2><p id="confirmText"></p><div class="actions"><button id="cancel" type="button" class="ghost-btn">CANCEL</button><button id="authorize" type="button" class="primary-btn">AUTHORIZE</button></div></dialog>
+<script src="app.js"></script><script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});</script>
+</body>
+</html>

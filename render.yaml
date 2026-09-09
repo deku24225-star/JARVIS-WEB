@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: jarvis-web-v1-3-test
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: openrouter/free
+      - key: OPENROUTER_WEB_SEARCH
+        value: true
+      - key: OPENROUTER_SITE_URL
+        sync: false
+      - key: OPENROUTER_SITE_NAME
+        value: JARVIS Web V1.3
