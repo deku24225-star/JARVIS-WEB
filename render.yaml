@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: jarvis-web-v1-3-test
+    name: jarvis-web-v1-4-test
     env: node
     buildCommand: npm install
     startCommand: npm start
@@ -10,9 +10,15 @@ services:
         sync: false
       - key: OPENROUTER_MODEL
         value: openrouter/free
-      - key: OPENROUTER_WEB_SEARCH
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.7-flash
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: WEB_SEARCH
         value: true
-      - key: OPENROUTER_SITE_URL
+      - key: PUBLIC_APP_URL
         sync: false
       - key: OPENROUTER_SITE_NAME
-        value: JARVIS Web V1.3
+        value: JARVIS Web V1.4

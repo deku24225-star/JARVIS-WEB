@@ -4,3 +4,5 @@
 .compose .round-btn { min-width:44px; min-height:44px; }
 @media (max-width:430px){ .compose { grid-template-columns:minmax(0,1fr) repeat(4,auto); gap:6px; } .compose .round-btn,.compose .send-btn{width:42px;height:42px;padding:0;} }
 .memory-card small{display:block;margin:8px 0;color:var(--muted,#8290a6);font-size:.75rem;}
+
+.diag-result{margin-top:10px;line-height:1.4;white-space:pre-wrap}

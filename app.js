@@ -4,6 +4,7 @@
   let rec = null;
   let pending = null;
   let muted = false;
+  let coreMeta = { provider: null, model: null, fallbackUsed: false, webUsed: false };
 
   const MEMORY_KEY = 'jarvis.memory.v3';
   const HISTORY_KEY = 'jarvis.history.v3';
@@ -124,10 +125,16 @@
   }
 
   function reply(text, options = {}) {
-    const shouldSpeak = options.speak === true;
-    msg('JARVIS', text, true);
-    addHistory('model', text);
-    if (shouldSpeak) speak(text);
+    let display = text;
+    if (options.meta && (options.meta.provider || options.meta.webUsed)) {
+      const parts = [];
+      if (options.meta.provider) parts.push(`AI: ${options.meta.provider}${options.meta.fallbackUsed ? ' (fallback)' : ''}`);
+      if (options.meta.webUsed) parts.push('WEB: Tavily');
+      if (parts.length) display += `\n\n<small>${parts.join(' · ')}</small>`;
+    }
+    msg('JARVIS', display);
+    if (options.speak) speak(text);
+    state.textContent = 'READY';
   }
 
   function openDialog(dialog) {
@@ -365,7 +372,8 @@
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || 'AI request failed.');
       state.textContent = 'READY';
-      reply(data.text, { speak: speakAfter });
+      coreMeta = { provider: data.provider || null, model: data.model || null, fallbackUsed: data.fallbackUsed === true, webUsed: data.webUsed === true };
+      reply(data.text, { speak: speakAfter, meta: coreMeta });
     } catch (error) {
       state.textContent = 'ERROR';
       reply('I could not complete that request. ' + error.message, { speak: speakAfter });
@@ -551,6 +559,38 @@
       if (dialog === $('confirm')) pending = null;
       state.textContent = 'READY';
     });
+  });
+
+
+  $('diagnostics')?.addEventListener('click', async () => {
+    const out = $('diagResult');
+    if (!out) return;
+    out.textContent = 'Running…';
+    try {
+      const r = await fetch('/api/diagnostics');
+      const d = await r.json();
+      if (!r.ok) throw new Error(d?.error || 'Diagnostic request failed.');
+      const p = d.providers || {};
+      out.textContent = `Core ${d.version || 'unknown'}\nOpenRouter: ${p.openrouter?.configured ? 'READY' : 'NOT CONFIGURED'}\nGemini: ${p.gemini?.configured ? 'READY' : 'NOT CONFIGURED'}\nTavily: ${p.tavily?.configured ? 'READY' : 'NOT CONFIGURED'}\nWeb search: ${d.webSearchEnabled ? 'ON' : 'OFF'}`;
+    } catch (error) {
+      out.textContent = 'Diagnostics unavailable.';
+    }
+  });
+
+
+  $('diagnostics')?.addEventListener('click', async () => {
+    const out = $('diagResult');
+    if (!out) return;
+    out.textContent = 'Running…';
+    try {
+      const r = await fetch('/api/diagnostics');
+      const d = await r.json();
+      if (!r.ok) throw new Error(d?.error || 'Diagnostic request failed.');
+      const p = d.providers || {};
+      out.textContent = `Core ${d.version || 'unknown'}\nOpenRouter: ${p.openrouter?.configured ? 'READY' : 'NOT CONFIGURED'}\nGemini: ${p.gemini?.configured ? 'READY' : 'NOT CONFIGURED'}\nTavily: ${p.tavily?.configured ? 'READY' : 'NOT CONFIGURED'}\nWeb search: ${d.webSearchEnabled ? 'ON' : 'OFF'}`;
+    } catch {
+      out.textContent = 'Diagnostics unavailable.';
+    }
   });
 
   applyAppearance();

@@ -1,54 +1,59 @@
-# JARVIS Web V1.3
+# 🦾 JARVIS Web V1.4
 
-V1.3 builds on V1.2 instead of rebuilding it from scratch.
+V1.4 upgrades the V1.3 web prototype into a provider-aware JARVIS Core foundation while preserving the earlier UI, memory, voice, authorization, time/date, weather, Maps, YouTube, search, and PWA behavior.
 
-## V1.3 upgrades
+## What changed
 
-- Current-information web grounding for current/latest/news/office-holder questions through the OpenRouter web plugin.
-- Improved tool/command routing while preserving time, date, weather, Google search, YouTube, Maps, memory, messaging and call preparation.
-- Authorization dialog hardened so cancel/authorize cannot leave the interface stuck.
-- Settings and memory dialogs use defensive open/close handling.
-- Voice output is now source-aware: automatic speech happens only for voice-input commands. Text commands remain silent.
-- Speech sanitizer removes Markdown artifacts, URLs, decorative symbols and common emoji/pictographic ranges before TTS.
-- JARVIS identity guard prevents invented origins such as a fictional company or founding year.
-- Memory and history remain local/browser-side; only explicit memories are persisted.
-- API key remains server-side.
+- OpenRouter is the primary AI provider.
+- Gemini is a real automatic fallback provider.
+- Tavily is the dedicated live-web provider.
+- `WEB_SEARCH=true` enables automatic web grounding for current/latest/news/price/weather/office-holder style requests and explicit web-search requests.
+- A central server-side provider/orchestration layer now routes AI requests and web research.
+- Current web results are passed into the AI with source attribution.
+- `/api/health` exposes non-secret provider configuration status.
+- `/api/diagnostics` exposes non-secret core/tool diagnostics.
+- `/api/web-search` provides a structured Tavily search endpoint.
+- Provider failures are logged on the server and returned to the UI as user-safe messages.
+- API keys remain server-side.
 
-## Important browser limitation
+## Environment variables
 
-The web app cannot silently place a phone call or access private contacts. A phone command with a numeric phone number requests authorization and then prepares the device dialer using a `tel:` URI. The user still controls the final call. Private contact lookup is not claimed.
+Required/optional server variables:
 
-## OpenRouter live search
+```text
+OPENROUTER_API_KEY
+OPENROUTER_MODEL
+GEMINI_API_KEY
+GEMINI_MODEL
+TAVILY_API_KEY
+WEB_SEARCH
+PUBLIC_APP_URL
+OPENROUTER_SITE_NAME
+PORT
+```
 
-`OPENROUTER_WEB_SEARCH=true` enables the web plugin only for requests detected as current/live or office-holder queries. OpenRouter documents the `web` plugin as model-agnostic grounding and notes that web search can add search-provider costs even when a free model is used. `openrouter/free` is a free router that selects from compatible free models.
+At least one AI provider should be configured. For full V1.4 behavior configure all three providers and set `WEB_SEARCH=true`.
 
-## Render environment
+## Provider order
 
-Set:
+1. OpenRouter
+2. Gemini fallback
 
-- `OPENROUTER_API_KEY` = your secret key
-- `OPENROUTER_MODEL` = `openrouter/free`
-- `OPENROUTER_WEB_SEARCH` = `true`
-- `OPENROUTER_SITE_URL` = your Render URL
-- `OPENROUTER_SITE_NAME` = `JARVIS Web V1.3`
+Tavily is used independently when live research is needed; it is not an AI fallback.
 
-Never commit the API key to GitHub.
+## Security boundary
 
-## Test endpoints
+The web app still cannot bypass browser/Android security boundaries. Calls/messages remain confirmation-gated and private contacts are not magically available to a browser. V2 will move the device-control layer into the native Android APK.
 
-- `/api/health`
-- `/api/time`
+## Acceptance tests
 
-## V1.3 acceptance tests
-
-1. AI chat answers normal questions.
-2. Current UK PM / latest news questions use live grounding when enabled.
-3. Text command responses do not auto-speak.
-4. Voice command responses do auto-speak.
-5. Emoji/Markdown decoration is not spoken.
-6. Settings opens and closes reliably.
-7. Authorization Cancel and Authorize are responsive.
-8. Call preparation only proceeds after authorization and only for a valid numeric number.
-9. JARVIS does not invent a Milimax origin or founding year.
-10. Memory save/show/forget/clear works.
-11. PWA loads correctly.
+1. Normal question -> OpenRouter answer when configured.
+2. Disable/break OpenRouter -> Gemini answers automatically when configured.
+3. Ask a current question -> Tavily search is invoked when `WEB_SEARCH=true`; answer includes sources when results exist.
+4. `POST /api/web-search` with a query -> structured Tavily results.
+5. `/api/health` and `/api/diagnostics` never return API keys.
+6. Text input does not auto-speak.
+7. Voice input auto-speaks when voice output is enabled.
+8. Authorization cancel does not execute sensitive actions.
+9. Authorized call/message intents execute only through browser-supported URI handling.
+10. Local time/date and other local tools continue without AI when possible.

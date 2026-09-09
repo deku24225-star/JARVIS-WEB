@@ -6,13 +6,13 @@
 <meta name="theme-color" content="#050914">
 <meta name="description" content="JARVIS — futuristic personal AI assistant">
 <link rel="manifest" href="manifest.webmanifest">
-<title>JARVIS // V1.3</title>
+<title>JARVIS // V1.4</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app-shell">
 <header class="topbar">
-  <div class="brand-wrap"><div class="brand">JARVIS</div><div class="sub">PERSONAL AI // V1.3</div></div>
+  <div class="brand-wrap"><div class="brand">JARVIS</div><div class="sub">PERSONAL AI // V1.4</div></div>
   <div class="top-actions"><span id="net" class="status-pill">ONLINE</span><button id="openMemory" type="button" class="icon-btn" aria-label="Open memory">◈</button><button id="settings" type="button" class="icon-btn" aria-label="Open settings">⚙</button></div>
 </header>
 <main>
@@ -28,7 +28,7 @@
   <div class="command-hint"><span>TEXT OR VOICE</span><span>AI PROPOSES · CORE DECIDES · YOU AUTHORIZE</span></div>
 </section>
 </main>
-<footer><span>JARVIS WEB CORE</span><span>V1.3.0</span></footer>
+<footer><span>JARVIS WEB CORE // PROVIDER ORCHESTRATION</span><span>V1.4.0</span></footer>
 </div>
 
 <dialog id="dlg" class="sheet">
@@ -38,8 +38,8 @@
 <section><h3>Voice</h3><label>Language<select id="lang"><option value="en-IN">English (India)</option><option value="hi-IN">Hindi (India)</option></select></label><label><input id="voice" type="checkbox" checked> Voice output enabled</label><label><input id="wake" type="checkbox"> Wake phrase mode</label><label>Wake phrase<input id="phrase" placeholder="Jarvis"></label><label>Speech speed<input id="speechRate" type="range" min="0.7" max="1.4" step="0.05" value="1"></label><p class="muted">Automatic speaking occurs only for responses triggered by voice input. Text commands stay silent unless you manually use voice output.</p></section>
 <section><h3>Appearance</h3><label>Theme<select id="theme"><option value="midnight">Midnight HUD</option><option value="glass">Glass HUD</option></select></label><label>Animation<select id="animations"><option value="full">Full</option><option value="reduced">Reduced</option></select></label></section>
 <section><h3>Memory</h3><label><input id="memoryEnabled" type="checkbox" checked> Allow JARVIS to save explicit memories</label><button id="openMemoryFromSettings" type="button" class="wide-btn">OPEN MEMORY CENTER</button></section>
-<section><h3>AI & Security</h3><div class="info-row"><span>Provider</span><b>OpenRouter</b></div><div class="info-row"><span>Model</span><b>Free router</b></div><div class="info-row"><span>Live information</span><b>Current-query web grounding</b></div><div class="info-row"><span>API key</span><b>Server-side</b></div><div class="info-row"><span>Sensitive actions</span><b>Confirmation required</b></div></section>
-<section><h3>About</h3><div class="info-row"><span>Version</span><b>V1.3.0</b></div><div class="info-row"><span>Platform</span><b>Web / PWA</b></div><p class="muted">JARVIS Web is browser-based. Native Android capabilities remain limited by browser security.</p></section>
+<section><h3>AI & Security</h3><div class="info-row"><span>Primary AI</span><b>OpenRouter</b></div><div class="info-row"><span>AI fallback</span><b>Gemini</b></div><div class="info-row"><span>Live web</span><b>Tavily</b></div><div class="info-row"><span>Web switch</span><b>WEB_SEARCH</b></div><div class="info-row"><span>API keys</span><b>Server-side</b></div><div class="info-row"><span>Sensitive actions</span><b>Confirmation required</b></div><button id="diagnostics" type="button" class="wide-btn">RUN CORE DIAGNOSTICS</button><div id="diagResult" class="muted diag-result"></div></section>
+<section><h3>About</h3><div class="info-row"><span>Version</span><b>V1.4.0</b></div><div class="info-row"><span>Architecture</span><b>Core + Provider Orchestrator</b></div><div class="info-row"><span>Platform</span><b>Web / PWA</b></div><p class="muted">JARVIS Web is browser-based. Native Android capabilities remain limited by browser security.</p></section>
 </div><button id="save" type="button" class="primary-btn">SAVE SETTINGS</button>
 </dialog>
 
