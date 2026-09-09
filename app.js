@@ -5,6 +5,14 @@
   let pending = null;
   let muted = false;
   let coreMeta = { provider: null, model: null, fallbackUsed: false, webUsed: false };
+  const activity = [];
+
+  function logActivity(type, detail) {
+    activity.unshift({ type, detail, at: Date.now() });
+    activity.splice(20);
+    const el = $('activityLog');
+    if (el) el.innerHTML = activity.map(a => `<div class=\"activity-row\"><span>${esc(a.type)}</span><b>${esc(a.detail)}</b><time>${new Date(a.at).toLocaleTimeString()}</time></div>`).join('');
+  }
 
   const MEMORY_KEY = 'jarvis.memory.v3';
   const HISTORY_KEY = 'jarvis.history.v3';
@@ -167,11 +175,16 @@
     const text = $('confirmText');
     if (!dialog || !text) {
       // Never dead-lock. A missing dialog means the action is not authorized.
+      logActivity('BLOCKED', 'Authorization panel unavailable');
       reply('I could not open the authorization panel, so I did not perform the action.', { speak: speakAfter });
       return;
     }
-    pending = { fn, speakAfter };
+    pending = { fn, speakAfter, label };
     text.textContent = 'JARVIS wants to ' + label + '. This requires your authorization.';
+    $('confirmRisk') && ($('confirmRisk').textContent = 'RISK LEVEL: HIGH');
+    $('confirmAction') && ($('confirmAction').textContent = label);
+    $('confirmEffect') && ($('confirmEffect').textContent = 'A system action will be prepared only after you authorize it. JARVIS will not bypass platform permissions or send/call automatically.');
+    logActivity('AUTH', 'Authorization requested: ' + label);
     state.textContent = 'AWAITING AUTHORIZATION';
     openDialog(dialog);
   }
@@ -346,6 +359,10 @@
       return true;
     }
 
+    if (/^plan\s+/i.test(x)) { runPlan(x.replace(/^plan\s+/i, '').trim(), speakAfter); return true; }
+
+    if (/^verify\s+/i.test(x)) { runVerify(x.replace(/^verify\s+/i, '').trim(), speakAfter); return true; }
+
     if (/^(who\s+are\s+you|what\s+are\s+you|tell\s+me\s+about\s+yourself|what\s+is\s+your\s+origin)\??$/i.test(x)) {
       reply('I am JARVIS, the personal AI assistant in this JARVIS Web project. I do not have a separate company, founder, or real-world founding date unless that information is explicitly provided by the project owner.', { speak: speakAfter });
       return true;
@@ -354,10 +371,38 @@
     return false;
   }
 
+  async function runPlan(goal, speakAfter = false) {
+    state.textContent = 'PLANNING';
+    try {
+      const r = await fetch('/api/plan', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({goal})});
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Planning failed.');
+      const plan = d.plan || {};
+      logActivity('PLAN', goal);
+      const lines = (plan.steps || []).map((step, i) => `${i + 1}. ${step.title} — ${step.status}`).join('\n');
+      reply(`Plan ready for: ${goal}\n\n${lines || 'No steps returned.'}`, {speak:speakAfter});
+    } catch (e) { reply('I could not create that plan. ' + e.message, {speak:speakAfter}); }
+    state.textContent = 'READY';
+  }
+
+  async function runVerify(claim, speakAfter = false) {
+    state.textContent = 'VERIFYING';
+    try {
+      const r = await fetch('/api/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({claim})});
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Verification failed.');
+      logActivity('VERIFY', claim);
+      const verdict = d.verified ? 'Evidence found. This is not a guarantee that every source agrees.' : 'No usable evidence was found.';
+      const src = (d.results || []).slice(0,4).map((x,i)=>`${i+1}. ${x.title} — ${x.url}`).join('\n');
+      reply(`${verdict}\n\n${src || 'No sources returned.'}`, {speak:speakAfter});
+    } catch (e) { reply('I could not verify that claim. ' + e.message, {speak:speakAfter}); }
+    state.textContent = 'READY';
+  }
+
   async function aiCommand(x, speakAfter) {
     state.textContent = 'THINKING';
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/agent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -373,6 +418,8 @@
       if (!response.ok) throw new Error(data.error || 'AI request failed.');
       state.textContent = 'READY';
       coreMeta = { provider: data.provider || null, model: data.model || null, fallbackUsed: data.fallbackUsed === true, webUsed: data.webUsed === true };
+      if (data.actionProposal) logActivity('PROPOSAL', data.actionProposal.preview || data.actionProposal.name);
+      if (data.plan) logActivity('PLAN', 'Structured task plan prepared');
       reply(data.text, { speak: speakAfter, meta: coreMeta });
     } catch (error) {
       state.textContent = 'ERROR';
@@ -541,6 +588,17 @@
   });
 
   $('closeSettings')?.addEventListener('click', () => closeDialog($('dlg')));
+  $('openTools')?.addEventListener('click', () => openDialog($('toolsDlg')));
+  $('closeTools')?.addEventListener('click', () => closeDialog($('toolsDlg')));
+  document.querySelectorAll('[data-tool-command]').forEach(button => {
+    button.addEventListener('click', () => {
+      const commandText = button.dataset.toolCommand || '';
+      closeDialog($('toolsDlg'));
+      input.value = commandText;
+      input.focus();
+      if (!commandText.endsWith(' ')) command(commandText, 'text');
+    });
+  });
 
   input?.addEventListener('keydown', event => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -554,7 +612,7 @@
   net.textContent = navigator.onLine ? 'ONLINE' : 'OFFLINE';
 
   // Escape/backdrop should never leave a modal half-locked.
-  [$('dlg'), $('memoryDlg'), $('confirm')].forEach(dialog => {
+  [$('dlg'), $('toolsDlg'), $('memoryDlg'), $('confirm')].forEach(dialog => {
     dialog?.addEventListener('cancel', () => {
       if (dialog === $('confirm')) pending = null;
       state.textContent = 'READY';
@@ -594,5 +652,6 @@
   });
 
   applyAppearance();
-  msg('JARVIS', 'JARVIS V1.3 online. Advanced tools, live-information routing, memory, voice, and secure authorization are ready.', true);
+  logActivity('CORE', 'V1.5 Agent Core online');
+  msg('JARVIS', 'JARVIS V1.5 online. Agent orchestration, planning, verification, live research, memory, voice, and authorization are ready.', true);
 })();

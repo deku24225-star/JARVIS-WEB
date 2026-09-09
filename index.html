@@ -6,14 +6,14 @@
 <meta name="theme-color" content="#050914">
 <meta name="description" content="JARVIS — futuristic personal AI assistant">
 <link rel="manifest" href="manifest.webmanifest">
-<title>JARVIS // V1.4</title>
+<title>JARVIS // V1.5</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app-shell">
 <header class="topbar">
-  <div class="brand-wrap"><div class="brand">JARVIS</div><div class="sub">PERSONAL AI // V1.4</div></div>
-  <div class="top-actions"><span id="net" class="status-pill">ONLINE</span><button id="openMemory" type="button" class="icon-btn" aria-label="Open memory">◈</button><button id="settings" type="button" class="icon-btn" aria-label="Open settings">⚙</button></div>
+  <div class="brand-wrap"><div class="brand">JARVIS</div><div class="sub">PERSONAL AI // V1.5</div></div>
+  <div class="top-actions"><span id="net" class="status-pill">ONLINE</span><button id="openTools" type="button" class="icon-btn labeled-icon" aria-label="Open tools"><span>⌘</span><small>TOOLS</small></button><button id="openMemory" type="button" class="icon-btn labeled-icon" aria-label="Open memory"><span>◈</span><small>MEM</small></button><button id="settings" type="button" class="icon-btn labeled-icon" aria-label="Open settings"><span>⚙</span><small>CORE</small></button></div>
 </header>
 <main>
 <section class="core-card">
@@ -23,29 +23,49 @@
 <section class="assistant-panel">
   <div class="panel-head"><div><span class="eyebrow">CONVERSATION</span><h2>JARVIS</h2></div><button id="clear" type="button" class="ghost-btn">CLEAR</button></div>
   <div id="chat" aria-live="polite"></div>
-  <div class="quick" aria-label="Optional shortcuts"><button data-c="What is the time?" type="button">TIME</button><button data-c="What's the weather?" type="button">WEATHER</button><button data-c="Search Google for " type="button">SEARCH</button><button data-c="Open YouTube" type="button">YOUTUBE</button><button data-c="Open Maps" type="button">MAPS</button><button data-c="Tell me the date" type="button">DATE</button></div>
+  <div class="quick-bar"><div class="quick-title"><span>QUICK ACTIONS</span><em>LOCAL SHORTCUTS</em></div><div class="quick" aria-label="Quick actions"><button data-c="What is the time?" type="button"><b>◷</b><span>TIME</span></button><button data-c="What's the weather?" type="button"><b>☁</b><span>WEATHER</span></button><button data-c="Search Google for " type="button"><b>⌕</b><span>SEARCH</span></button><button data-c="Open YouTube" type="button"><b>▶</b><span>YOUTUBE</span></button><button data-c="Open Maps" type="button"><b>⌖</b><span>MAPS</span></button><button data-c="Tell me the date" type="button"><b>◫</b><span>DATE</span></button></div></div>
   <div class="compose"><textarea id="input" rows="1" placeholder="Ask JARVIS anything…" aria-label="Message JARVIS"></textarea><button id="mic" type="button" class="round-btn" aria-label="Voice input">⌁</button><button id="remember" type="button" class="round-btn" aria-label="Remember this">◈</button><button id="stop" type="button" class="round-btn" aria-label="Stop voice output">■</button><button id="send" type="button" class="send-btn" aria-label="Send">↑</button></div>
   <div class="command-hint"><span>TEXT OR VOICE</span><span>AI PROPOSES · CORE DECIDES · YOU AUTHORIZE</span></div>
+  <section class="activity-panel"><div class="activity-head"><span class="eyebrow">ACTIVITY TRAIL</span><span>DECISIONS · TOOLS · AUTHORIZATION</span></div><div id="activityLog" class="activity-log"></div></section>
 </section>
 </main>
-<footer><span>JARVIS WEB CORE // PROVIDER ORCHESTRATION</span><span>V1.4.0</span></footer>
+<footer><span>JARVIS WEB CORE // PROVIDER ORCHESTRATION</span><span>V1.5.0</span></footer>
 </div>
 
-<dialog id="dlg" class="sheet">
-<div class="sheet-head"><div><span class="eyebrow">CONTROL CENTER</span><h2>Settings</h2></div><button id="closeSettings" type="button" class="icon-btn">×</button></div>
-<div class="settings-grid">
-<section><h3>JARVIS</h3><label>Personality<select id="person"><option value="bestfriend">Male Best Friend</option><option value="professional">Professional</option><option value="calm">Calm</option></select></label><label>Response style<select id="style"><option value="balanced">Balanced</option><option value="concise">Concise</option><option value="detailed">Detailed</option></select></label></section>
-<section><h3>Voice</h3><label>Language<select id="lang"><option value="en-IN">English (India)</option><option value="hi-IN">Hindi (India)</option></select></label><label><input id="voice" type="checkbox" checked> Voice output enabled</label><label><input id="wake" type="checkbox"> Wake phrase mode</label><label>Wake phrase<input id="phrase" placeholder="Jarvis"></label><label>Speech speed<input id="speechRate" type="range" min="0.7" max="1.4" step="0.05" value="1"></label><p class="muted">Automatic speaking occurs only for responses triggered by voice input. Text commands stay silent unless you manually use voice output.</p></section>
-<section><h3>Appearance</h3><label>Theme<select id="theme"><option value="midnight">Midnight HUD</option><option value="glass">Glass HUD</option></select></label><label>Animation<select id="animations"><option value="full">Full</option><option value="reduced">Reduced</option></select></label></section>
-<section><h3>Memory</h3><label><input id="memoryEnabled" type="checkbox" checked> Allow JARVIS to save explicit memories</label><button id="openMemoryFromSettings" type="button" class="wide-btn">OPEN MEMORY CENTER</button></section>
-<section><h3>AI & Security</h3><div class="info-row"><span>Primary AI</span><b>OpenRouter</b></div><div class="info-row"><span>AI fallback</span><b>Gemini</b></div><div class="info-row"><span>Live web</span><b>Tavily</b></div><div class="info-row"><span>Web switch</span><b>WEB_SEARCH</b></div><div class="info-row"><span>API keys</span><b>Server-side</b></div><div class="info-row"><span>Sensitive actions</span><b>Confirmation required</b></div><button id="diagnostics" type="button" class="wide-btn">RUN CORE DIAGNOSTICS</button><div id="diagResult" class="muted diag-result"></div></section>
-<section><h3>About</h3><div class="info-row"><span>Version</span><b>V1.4.0</b></div><div class="info-row"><span>Architecture</span><b>Core + Provider Orchestrator</b></div><div class="info-row"><span>Platform</span><b>Web / PWA</b></div><p class="muted">JARVIS Web is browser-based. Native Android capabilities remain limited by browser security.</p></section>
-</div><button id="save" type="button" class="primary-btn">SAVE SETTINGS</button>
+<dialog id="toolsDlg" class="hud-dialog tools-dialog">
+  <div class="hud-head"><div><span class="eyebrow">TOOL MATRIX</span><h2>JARVIS Capabilities</h2><p>Tools are grouped by function — shortcuts are not the AI core.</p></div><button id="closeTools" type="button" class="close-btn">×</button></div>
+  <div class="tool-status"><span><i></i> ORCHESTRATOR ONLINE</span><span>RISK-AWARE EXECUTION</span></div>
+  <div class="tool-grid">
+    <button class="tool-node" data-tool-command="Search the web for "><span class="node-icon">⌕</span><strong>WEB INTELLIGENCE</strong><small>Tavily research · current data</small><b class="tool-risk">INFO</b></button>
+    <button class="tool-node" data-tool-command="Remember "><span class="node-icon">◈</span><strong>MEMORY CORE</strong><small>Retrieve · save · forget</small><b class="tool-risk">CONTROLLED</b></button>
+    <button class="tool-node" data-tool-command="Create a plan for "><span class="node-icon">⌬</span><strong>TASK PLANNER</strong><small>Plans · steps · checkpoints</small><b class="tool-risk">INFO</b></button>
+    <button class="tool-node" data-tool-command="Verify "><span class="node-icon">✓</span><strong>VERIFICATION</strong><small>Re-check · compare sources</small><b class="tool-risk">INFO</b></button>
+    <button class="tool-node" data-tool-command="Open YouTube"><span class="node-icon">▶</span><strong>MEDIA BRIDGE</strong><small>YouTube · permitted media actions</small><b class="tool-risk">LOW</b></button>
+    <button class="tool-node" data-tool-command="Open Maps"><span class="node-icon">⌖</span><strong>NAVIGATION</strong><small>Maps · location-aware requests</small><b class="tool-risk">PERMISSION</b></button>
+    <button class="tool-node" data-tool-command="Prepare a call to "><span class="node-icon">⌕</span><strong>COMMUNICATIONS</strong><small>Calls · messages · approval gates</small><b class="tool-risk high">HIGH</b></button>
+    <button class="tool-node" data-tool-command="Tell me the time"><span class="node-icon">◷</span><strong>LOCAL UTILITIES</strong><small>Time · date · independent tools</small><b class="tool-risk">LOCAL</b></button>
+  </div>
+  <div class="tool-footer"><span>AI decides when a tool is appropriate.</span><span>JARVIS CORE retains final execution control.</span></div>
+</dialog>
+
+<dialog id="dlg" class="hud-dialog settings-dialog">
+  <div class="hud-head"><div><span class="eyebrow">JARVIS CONTROL CENTER</span><h2>System Configuration</h2><p>Configure behavior, voice, appearance and core safeguards.</p></div><button id="closeSettings" type="button" class="close-btn">×</button></div>
+  <div class="control-overview"><div><span>CORE</span><b>ONLINE</b></div><div><span>AI ROUTING</span><b>OPENROUTER → GEMINI</b></div><div><span>WEB</span><b>TAVILY</b></div><div><span>SECURITY</span><b>ARMED</b></div></div>
+  <div class="settings-grid">
+    <section class="control-card"><div class="card-label"><span>01</span><h3>PERSONALITY</h3></div><label>Profile<select id="person"><option value="bestfriend">Male Best Friend</option><option value="professional">Professional</option><option value="calm">Calm</option></select></label><label>Response style<select id="style"><option value="balanced">Balanced</option><option value="concise">Concise</option><option value="detailed">Detailed</option></select></label></section>
+    <section class="control-card"><div class="card-label"><span>02</span><h3>VOICE INTERFACE</h3></div><label>Language<select id="lang"><option value="en-IN">English (India)</option><option value="hi-IN">Hindi (India)</option></select></label><label class="switch-row"><input id="voice" type="checkbox" checked><span>Voice output enabled</span></label><label class="switch-row"><input id="wake" type="checkbox"><span>Wake phrase mode</span></label><label>Wake phrase<input id="phrase" placeholder="Jarvis"></label><label>Speech speed<input id="speechRate" type="range" min="0.7" max="1.4" step="0.05" value="1"></label><p class="helper">Voice-originated conversations may speak automatically. Text commands remain silent.</p></section>
+    <section class="control-card"><div class="card-label"><span>03</span><h3>HUD SYSTEM</h3></div><label>Theme<select id="theme"><option value="midnight">Midnight HUD</option><option value="glass">Glass HUD</option></select></label><label>Animation<select id="animations"><option value="full">Full</option><option value="reduced">Reduced</option></select></label><div class="hud-mini"><span></span><span></span><span></span><span></span><span></span></div></section>
+    <section class="control-card"><div class="card-label"><span>04</span><h3>MEMORY CORE</h3></div><label class="switch-row"><input id="memoryEnabled" type="checkbox" checked><span>Allow explicit memories</span></label><button id="openMemoryFromSettings" type="button" class="matrix-btn">OPEN MEMORY CENTER <b>↗</b></button><p class="helper">Temporary conversation context is separate from saved memory.</p></section>
+    <section class="control-card"><div class="card-label"><span>05</span><h3>AI NETWORK</h3></div><div class="provider-row"><span>PRIMARY</span><b>OPENROUTER</b><i>READY</i></div><div class="provider-row"><span>FALLBACK</span><b>GEMINI</b><i>READY</i></div><div class="provider-row"><span>WEB RESEARCH</span><b>TAVILY</b><i>READY</i></div><div class="provider-row"><span>API KEYS</span><b>SERVER-SIDE</b><i>SAFE</i></div></section>
+    <section class="control-card"><div class="card-label"><span>06</span><h3>SECURITY CORE</h3></div><div class="provider-row"><span>ACTION POLICY</span><b>RISK-AWARE</b><i>ARMED</i></div><div class="provider-row"><span>SENSITIVE ACTIONS</span><b>CONFIRM</b><i>ON</i></div><button id="diagnostics" type="button" class="matrix-btn">RUN CORE DIAGNOSTICS <b>⌁</b></button><div id="diagResult" class="diag-result"></div></section>
+  </div>
+  <div class="about-strip"><span>JARVIS WEB CORE // V1.5.0</span><span>Native Android architecture is the V2 destination.</span></div>
+  <button id="save" type="button" class="primary-btn save-core">SAVE CORE CONFIGURATION</button>
 </dialog>
 
 <dialog id="memoryDlg" class="sheet"><div class="sheet-head"><div><span class="eyebrow">MEMORY CORE</span><h2>Your memories</h2></div><button id="closeMemory" type="button" class="icon-btn">×</button></div><p class="muted">Only explicit memories are saved here. You can remove any memory at any time.</p><div id="memoryList" class="memory-list"></div><button id="clearMemories" type="button" class="danger-btn">CLEAR ALL MEMORIES</button></dialog>
 
-<dialog id="confirm" class="confirm"><div class="eyebrow">SECURITY CORE</div><h2>Authorization required</h2><p id="confirmText"></p><div class="actions"><button id="cancel" type="button" class="ghost-btn">CANCEL</button><button id="authorize" type="button" class="primary-btn">AUTHORIZE</button></div></dialog>
+<dialog id="confirm" class="confirm"><div class="eyebrow">ACTION PREVIEW // SECURITY CORE</div><h2>Authorization required</h2><div class="preview-grid"><div><span>RISK</span><b id="confirmRisk">HIGH</b></div><div><span>ACTION</span><b id="confirmAction">—</b></div></div><p id="confirmText"></p><div class="preview-effect"><span>CONSEQUENCE</span><p id="confirmEffect">—</p></div><div class="actions"><button id="cancel" type="button" class="ghost-btn">CANCEL</button><button id="authorize" type="button" class="primary-btn">AUTHORIZE</button></div></dialog>
 <script src="app.js"></script><script>if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});</script>
 </body>
 </html>
